@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripeServer } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   try {
     const { userId, email } = await req.json();
+    const stripe = getStripeServer();
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
               name: "PatPal Monthly Access",
               description: "Unlimited text, audio, and video with Pat Pals",
             },
-            unit_amount: 2900, // $29.00
+            unit_amount: 2900,
             recurring: { interval: "month" },
           },
           quantity: 1,
