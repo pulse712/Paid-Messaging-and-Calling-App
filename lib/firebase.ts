@@ -12,7 +12,15 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+// Only initialize if API key is present (prevents build-time crash)
+const app =
+  firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("your_")
+    ? getApps().length
+      ? getApp()
+      : initializeApp(firebaseConfig)
+    : getApps().length
+    ? getApp()
+    : initializeApp({ ...firebaseConfig, apiKey: "placeholder" });
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
