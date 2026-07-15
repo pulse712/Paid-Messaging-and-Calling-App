@@ -33,7 +33,13 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      if (DEMO_MODE) {
+      // Always use demo mode if Firebase is not configured
+      const isDemo =
+        !process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
+        process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_firebase_api_key" ||
+        process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "placeholder";
+
+      if (isDemo) {
         const user = demoLogin(data.email, data.password);
         if (user.role === "admin") router.push("/admin");
         else if (user.role === "patpal") router.push("/patpal/dashboard");
@@ -49,7 +55,7 @@ export default function LoginPage() {
       else router.push("/client/dashboard");
     } catch (err: unknown) {
       if (err instanceof Error) {
-        setError(err.message.includes("demo") ? err.message : "Invalid email or password");
+        setError(err.message.includes("No account") ? err.message : "Invalid email or password");
       } else {
         setError("Invalid email or password");
       }

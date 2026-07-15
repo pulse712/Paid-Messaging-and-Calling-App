@@ -54,7 +54,12 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
     try {
-      if (DEMO_MODE) {
+      const isDemo =
+        !process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
+        process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_firebase_api_key" ||
+        process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "placeholder";
+
+      if (isDemo) {
         demoRegister(data.email, data.password, data.displayName, data.role, data.phone, data.bio);
         if (data.role === "patpal") router.push("/patpal/dashboard");
         else router.push("/client/dashboard");

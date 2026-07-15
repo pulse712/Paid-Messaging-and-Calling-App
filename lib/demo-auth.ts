@@ -1,8 +1,12 @@
 // Demo mode auth — bypasses Firebase when credentials are not configured
 // Remove this file and update auth pages when real Firebase keys are added
 
-export const DEMO_MODE = !process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
-  process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_firebase_api_key";
+export const DEMO_MODE =
+  typeof window !== "undefined"
+    ? !process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
+      process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "your_firebase_api_key" ||
+      process.env.NEXT_PUBLIC_FIREBASE_API_KEY === "placeholder"
+    : true;
 
 export interface DemoUser {
   uid: string;
@@ -58,7 +62,7 @@ export const demoRegister = (
     email,
     displayName,
     role,
-    hasActiveSubscription: role === "client" ? false : true,
+    hasActiveSubscription: false,
     availability: role === "patpal" ? "available" : undefined,
     bio: bio || "",
     isActive: true,
