@@ -11,16 +11,13 @@ export default function Home() {
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      router.push("/auth/login");
+      router.replace("/auth/login");
       return;
     }
-    if (profile?.role === "admin") {
-      router.push("/admin");
-    } else if (profile?.role === "patpal") {
-      router.push("/patpal/dashboard");
-    } else {
-      router.push("/client/dashboard");
-    }
+    const role = (profile as any)?.role;
+    if (role === "admin") router.replace("/admin");
+    else if (role === "patpal") router.replace("/patpal/dashboard");
+    else router.replace("/client/dashboard");
   }, [user, profile, loading, router]);
 
   return (
@@ -29,7 +26,7 @@ export default function Home() {
         <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center">
           <span className="text-white text-2xl font-bold">P</span>
         </div>
-        <p className="text-indigo-600 font-medium">Loading PatPal...</p>
+        <p className="text-indigo-600 font-medium">Loading...</p>
       </div>
     </div>
   );
