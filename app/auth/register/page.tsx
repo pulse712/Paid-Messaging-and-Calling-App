@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
+import { DEMO_MODE, demoRegister } from "@/lib/demo-auth";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +23,7 @@ const schema = z
     phone: z.string().min(10, "Enter a valid phone number"),
     role: z.enum(["client", "patpal"]),
     bio: z.string().optional(),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -53,14 +54,16 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
     try {
-      const userCred = await createUserWithEmailAndPassword(
-        auth,
-        data.email,
-        data.password
-      );
+      if (DEMO_MODE) {
+        demoRegister(data.email, data.password, data.displayName, data.role, data.phone, data.bio);
+        if (data.role === "patpal") router.push("/patpal/dashboard");
+        else router.push("/client/dashboard");
+        return;
+      }
+
+      const userCred = await createUserWithEmailAndPassword(auth, data.email, data.password);
       await updateProfile(userCred.user, { displayName: data.displayName });
       await sendEmailVerification(userCred.user);
-
       await setDoc(doc(db, "users", userCred.user.uid), {
         uid: userCred.user.uid,
         email: data.email,
@@ -71,12 +74,8 @@ export default function RegisterPage() {
         photoURL: "",
         isActive: true,
         createdAt: serverTimestamp(),
-        ...(data.role === "patpal" && {
-          availability: "offline",
-          sessionCount: 0,
-        }),
+        ...(data.role === "patpal" && { availability: "available", sessionCount: 0 }),
       });
-
       router.push("/auth/verify-email");
     } catch (err: unknown) {
       if (err instanceof Error && err.message.includes("email-already-in-use")) {
@@ -92,6 +91,15 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-indigo-50 px-4 py-8">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+        {DEMO_MODE && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6">
+            <p className="text-amber-700 text-sm font-medium">Demo Mode</p>
+            <p className="text-amber-600 text-xs mt-0.5">
+              Use any email and password. Data is stored locally in your browser.
+            </p>
+          </div>
+        )}
+
         <div className="flex flex-col items-center mb-8">
           <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center mb-3">
             <span className="text-white text-2xl font-bold">P</span>
@@ -101,11 +109,8 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Role selector */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              I am a...
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">I am a...</label>
             <div className="grid grid-cols-2 gap-3">
               {(["client", "patpal"] as const).map((r) => (
                 <label
@@ -116,12 +121,7 @@ export default function RegisterPage() {
                       : "border-gray-200 text-gray-600"
                   }`}
                 >
-                  <input
-                    {...register("role")}
-                    type="radio"
-                    value={r}
-                    className="sr-only"
-                  />
+                  <input {...register("role")} type="radio" value={r} className="sr-only" />
                   <span className="font-medium text-sm capitalize">
                     {r === "patpal" ? "Pat Pal" : "Client"}
                   </span>
@@ -131,91 +131,69 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full name
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
             <input
               {...register("displayName")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-black"
               placeholder="John Smith"
             />
-            {errors.displayName && (
-              <p className="text-red-500 text-xs mt-1">{errors.displayName.message}</p>
-            )}
+            {errors.displayName && <p className="text-red-500 text-xs mt-1">{errors.displayName.message}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email address
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
             <input
               {...register("email")}
               type="email"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-black"
               placeholder="you@example.com"
             />
-            {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-            )}
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone number
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Phone number</label>
             <input
               {...register("phone")}
               type="tel"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-black"
               placeholder="+1 555 000 0000"
             />
-            {errors.phone && (
-              <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
-            )}
+            {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
           </div>
 
           {role === "patpal" && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Short bio
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Short bio</label>
               <textarea
                 {...register("bio")}
                 rows={3}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm resize-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-black resize-none"
                 placeholder="Tell clients a little about yourself..."
               />
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               {...register("password")}
               type="password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-black"
               placeholder="••••••••"
             />
-            {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-            )}
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm password
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm password</label>
             <input
               {...register("confirmPassword")}
               type="password"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-black"
               placeholder="••••••••"
             />
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>
-            )}
+            {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>}
           </div>
 
           {error && (

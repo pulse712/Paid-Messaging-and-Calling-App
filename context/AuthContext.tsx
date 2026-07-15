@@ -15,12 +15,19 @@ import {
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { UserProfile } from "@/types";
+import {
+  DEMO_MODE,
+  DemoUser,
+  getDemoSession,
+  demoSignOut,
+} from "@/lib/demo-auth";
 
 interface AuthContextType {
-  user: User | null;
+  user: User | DemoUser | null;
   profile: UserProfile | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  isDemo: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -28,19 +35,27 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   loading: true,
   signOut: async () => {},
+  isDemo: false,
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | DemoUser | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // If Firebase is not configured yet, skip auth listener
-    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+    // Demo mode — use localStorage session
+    if (DEMO_MODE) {
+      const session = getDemoSession();
+      if (session) {
+        setUser(session);
+        setProfile(session as unknown as UserProfile);
+      }
       setLoading(false);
       return;
     }
+
+    // Real Firebase mode
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
@@ -62,13 +77,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signOut = async () => {
+    if (DEMO_MODE) {
+      demoSignOut();
+      setUser(null);
+      setProfile(null);
+      return;
+    }
     await firebaseSignOut(auth);
     setUser(null);
     setProfile(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signOut }}>
+    <AuthContext.Provider value={{ user, profile, loading, signOut, isDemo: DEMO_MODE }}>
       {children}
     </AuthContext.Provider>
   );
