@@ -49,10 +49,7 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-white`}>
         <AuthProvider>
-          {/* Center content on desktop, full width on mobile */}
-          <div className="min-h-screen w-full max-w-md mx-auto bg-white relative shadow-none md:shadow-xl">
-            {children}
-          </div>
+          {children}
         </AuthProvider>
       </body>
     </html>
