@@ -81,11 +81,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       demoSignOut();
       setUser(null);
       setProfile(null);
+      window.location.href = "/auth/login";
       return;
     }
     await firebaseSignOut(auth);
     setUser(null);
     setProfile(null);
+    window.location.href = "/auth/login";
   };
 
   return (
