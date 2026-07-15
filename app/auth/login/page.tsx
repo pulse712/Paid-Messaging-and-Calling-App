@@ -81,7 +81,7 @@ export default function LoginPage() {
             <span className="text-white text-2xl font-bold">P</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
-          <p className="text-gray-500 text-sm mt-1">Sign in to your PatPal account</p>
+          <p className="text-gray-500 text-sm mt-1">Sign in to Pat My Back</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

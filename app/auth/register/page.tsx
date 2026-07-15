@@ -110,7 +110,7 @@ export default function RegisterPage() {
             <span className="text-white text-2xl font-bold">P</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Create account</h1>
-          <p className="text-gray-500 text-sm mt-1">Join PatPal today</p>
+          <p className="text-gray-500 text-sm mt-1">Join Pat My Back today</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

@@ -8,6 +8,8 @@ import { Chat } from "@/types";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+import BottomNav from "@/components/BottomNav";
+
 export default function ClientChatsPage() {
   const { user } = useAuth();
   const router = useRouter();
@@ -74,6 +76,7 @@ export default function ClientChatsPage() {
           </div>
         )}
       </main>
+      <BottomNav active="chats" />
     </div>
   );
 }
