@@ -77,7 +77,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white px-6">
       <div className="flex flex-col items-center pt-10 pb-6">
-        <div className="w-14 h-14 bg-green-500 rounded-2xl flex items-center justify-center mb-3 shadow-lg shadow-green-200">
+        <div className="w-14 h-14 bg-teal-500 rounded-2xl flex items-center justify-center mb-3 shadow-lg shadow-teal-100">
           <span className="text-white text-2xl font-bold">P</span>
         </div>
         <h1 className="text-2xl font-bold text-gray-900">Create account</h1>
@@ -89,7 +89,7 @@ export default function RegisterPage() {
         <div className="grid grid-cols-2 gap-3">
           {(["client", "patpal"] as const).map((r) => (
             <label key={r} className={`flex items-center justify-center py-3.5 rounded-2xl border-2 cursor-pointer transition-colors ${
-              role === r ? "border-green-500 bg-green-50 text-green-700" : "border-gray-200 text-gray-500"
+              role === r ? "border-teal-500 bg-teal-50 text-teal-700" : "border-gray-200 text-gray-500"
             }`}>
               <input {...register("role")} type="radio" value={r} className="sr-only" />
               <span className="font-semibold text-sm">{r === "patpal" ? "Pat Pal" : "Client"}</span>
@@ -141,14 +141,14 @@ export default function RegisterPage() {
         )}
 
         <button type="submit" disabled={loading}
-          className="w-full bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white font-semibold py-4 rounded-2xl transition-colors text-sm shadow-lg shadow-green-200">
+          className="w-full bg-teal-500 hover:bg-teal-600 disabled:bg-teal-300 text-white font-semibold py-4 rounded-2xl transition-colors text-sm shadow-lg shadow-teal-100">
           {loading ? "Creating account..." : "Create account"}
         </button>
       </form>
 
       <p className="text-center text-gray-500 text-sm py-8">
         Already have an account?{" "}
-        <Link href="/auth/login" className="text-green-600 font-semibold">Sign in</Link>
+        <Link href="/auth/login" className="text-teal-600 font-semibold">Sign in</Link>
       </p>
     </div>
   );

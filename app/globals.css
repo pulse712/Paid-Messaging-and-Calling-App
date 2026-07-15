@@ -1,43 +1,31 @@
 @import "tailwindcss";
 
 :root {
+  --primary: #0EA5A0;
+  --primary-light: #E0F5F4;
   --background: #ffffff;
   --foreground: #111111;
-  --primary: #22c55e;
-  --primary-dark: #16a34a;
-  --primary-light: #dcfce7;
 }
 
 body {
   background: #ffffff;
-  color: var(--foreground);
+  color: #111111;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-/* Scrollbar hide */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* Form inputs */
-input,
-textarea,
-select {
-  pointer-events: auto;
-  -webkit-user-select: auto;
-  user-select: auto;
-}
+input, textarea, select, button { pointer-events: auto; }
 
 input[type="text"],
 input[type="email"],
 input[type="password"],
 input[type="tel"],
 input[type="number"],
-textarea,
-select {
+textarea, select {
   background-color: #ffffff !important;
   color: #000000 !important;
   opacity: 1 !important;
@@ -45,8 +33,7 @@ select {
   caret-color: #000000 !important;
 }
 
-input::placeholder,
-textarea::placeholder {
+input::placeholder, textarea::placeholder {
   color: #9ca3af !important;
   opacity: 1 !important;
 }
@@ -56,10 +43,6 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
   -webkit-text-fill-color: #000000 !important;
   -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
-  caret-color: #000000 !important;
 }
 
-input[type="radio"],
-input[type="checkbox"] {
-  cursor: pointer;
-}
+input[type="radio"], input[type="checkbox"] { cursor: pointer; }

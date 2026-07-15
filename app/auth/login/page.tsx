@@ -68,7 +68,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col bg-white px-6">
       {/* Logo */}
       <div className="flex flex-col items-center pt-14 pb-8">
-        <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-green-200">
+        <div className="w-16 h-16 bg-teal-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-teal-200">
           <span className="text-white text-3xl font-bold">P</span>
         </div>
         <h1 className="text-2xl font-bold text-gray-900">Pat My Back</h1>
@@ -108,7 +108,7 @@ export default function LoginPage() {
         </div>
 
         <div className="text-right">
-          <Link href="/auth/forgot-password" className="text-green-600 text-sm font-medium">Forgot password?</Link>
+          <Link href="/auth/forgot-password" className="text-teal-600 text-sm font-medium">Forgot password?</Link>
         </div>
 
         {error && (
@@ -120,7 +120,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white font-semibold py-4 rounded-2xl transition-colors text-sm shadow-lg shadow-green-200"
+          className="w-full bg-teal-500 hover:bg-teal-600 disabled:bg-teal-300 text-white font-semibold py-4 rounded-2xl transition-colors text-sm shadow-lg shadow-teal-100"
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>
@@ -128,7 +128,7 @@ export default function LoginPage() {
 
       <p className="text-center text-gray-500 text-sm py-8">
         Don&apos;t have an account?{" "}
-        <Link href="/auth/register" className="text-green-600 font-semibold">Sign up</Link>
+        <Link href="/auth/register" className="text-teal-600 font-semibold">Sign up</Link>
       </p>
     </div>
   );
